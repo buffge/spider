@@ -1,0 +1,31 @@
+{
+  "name": "spider",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/buffge/spider",
+  "author": "buffge <1515888956@qq.com>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "delay": "^4.3.0",
+    "jquery": "^3.4.1",
+    "module-alias": "^2.2.2",
+    "moment": "^2.24.0",
+    "puppeteer-core": "^1.20.0"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.3.31",
+    "@types/node": "^12.7.12",
+    "@types/puppeteer-core": "^1.9.0",
+    "typescript": "^3.6.4"
+  },
+  "scripts": {
+    "start": "node ./build/index"
+  },
+  "_moduleAliases": {
+    "@": "./build",
+    "@interface": "./build/interface",
+    "@sites": "./build/sites",
+    "@conf": "./build/config"
+  }
+}

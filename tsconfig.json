@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "lib": ["dom", "esnext"],
+    "sourceMap": false,
+    "inlineSourceMap": false,
+    "jsx": "react",
+    "moduleResolution": "node",
+    "noImplicitReturns": true,
+    "strict": true,
+    "charset": "utf8",
+    "newLine": "LF",
+    "removeComments": true,
+    "plugins": [],
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": false,
+    "outDir": "build",
+    "allowJs": false,
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+      "@interface/*": ["./interface/*"],
+      "@sites/*": ["./sites/*"],
+      "@conf/*": ["./config/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": []
+}
