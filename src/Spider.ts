@@ -1,4 +1,4 @@
-import ISpider, { ScreenShotConf } from "@/interface/Spider"
+import ISpider, { ScreenShotConf, Mode } from "@/interface/Spider"
 import { existsSync, mkdirSync } from "fs"
 import * as os from "os"
 import puppeteer, {
@@ -14,8 +14,9 @@ export default class Spider implements ISpider {
   startTime?: Date
   pages: Page[] = []
   browser?: Browser
-
-  constructor() {}
+  constructor(mode: Mode = "prod") {
+    mode = mode
+  }
   start() {}
   async launch(opts: LaunchOptions) {
     this.startTime = new Date()
@@ -85,7 +86,7 @@ export default class Spider implements ISpider {
   async screenShot(page: Page, conf: ScreenShotConf) {
     const { fileName, fullPage, path } = conf
     if (!existsSync(path)) {
-      mkdirSync(path)
+      mkdirSync(path, { recursive: true })
     }
     await page.screenshot({
       path: path + "/" + fileName + ".png",

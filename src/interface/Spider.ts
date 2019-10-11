@@ -8,6 +8,7 @@ export interface ScreenShotConf {
   // 全屏
   fullPage?: boolean
 }
+export type Mode = "debug" | "prod"
 export default interface ISpider {
   startTime?: Date
   pages: Page[]

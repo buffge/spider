@@ -1,6 +1,10 @@
 {
   "typescript.tsdk": "node_modules\\typescript\\lib",
-  "cSpell.words": ["KHTML", "sina"],
+  "cSpell.words": [
+    "KHTML",
+    "laruence",
+    "sina"
+  ],
   "cSpell.ignorePaths": [
     "**/package-lock.json",
     "**/node_modules/**",
