@@ -1,12 +1,13 @@
 {
   "typescript.tsdk": "node_modules\\typescript\\lib",
-  "cSpell.words": ["sina"],
+  "cSpell.words": ["KHTML", "sina"],
   "cSpell.ignorePaths": [
     "**/package-lock.json",
     "**/node_modules/**",
     "**/vscode-extension/**",
     "**/.git/objects/**",
     ".vscode",
-    "**/cookie.ts"
+    "**/cookie.ts",
+    "src/config/app.ts"
   ]
 }

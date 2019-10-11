@@ -17,7 +17,7 @@ export default interface ISpider {
   // 设置 ua
   setUserAgent(page: Page, userAgent: string): Promise<any>
   // 设置最大化
-  setMaxViewport(page: Page): Promise<any>
+  setMaxViewport(page: Page, headless: boolean): Promise<any>
   // 截屏
   screenShot(page: Page, conf: ScreenShotConf): Promise<any>
   // 注入脚本
@@ -25,4 +25,6 @@ export default interface ISpider {
   go(page: Page, url: string, opts?: DirectNavigationOptions): Promise<any>
   shutdown(): Promise<any>
   setCookie(page: Page, cookies: SetCookie[]): Promise<any>
+  // 请求拦截器
+  setRequestInterception(page: Page): Promise<any>
 }

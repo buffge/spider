@@ -1,13 +1,15 @@
 import ISpider, { ScreenShotConf } from "@/interface/Spider"
+import { existsSync, mkdirSync } from "fs"
 import * as os from "os"
 import puppeteer, {
-  LaunchOptions,
-  Page,
   Browser,
   DirectNavigationOptions,
+  LaunchOptions,
+  Page,
   SetCookie,
 } from "puppeteer-core"
-import { scriptNameMapPath } from "./config/app"
+import { pseudoChrome, scriptNameMapPath } from "./config/app"
+declare let window: Window & { chrome: any }
 export default class Spider implements ISpider {
   startTime?: Date
   pages: Page[] = []
@@ -23,10 +25,55 @@ export default class Spider implements ISpider {
   async setUserAgent(page: Page, userAgent: string) {
     await page.setUserAgent(userAgent)
   }
-  async setMaxViewport(page: Page) {
+  async setWebDriverMask(page: Page) {
+    await page.evaluateOnNewDocument(() => {
+      window.chrome = pseudoChrome
+      const originalQuery = window.navigator.permissions.query
+      window.navigator.permissions.query = parameters =>
+        parameters.name === "notifications"
+          ? Promise.resolve({ state: Notification.permission } as PermissionStatus)
+          : originalQuery(parameters)
+      //插件这个不要写
+      // Object.defineProperty(navigator, 'plugins', {
+      //   get: () => [1, 2, 3, 4, 5],
+      // });
+      Object.defineProperty(navigator, "languages", {
+        get: () => ["en", "zh-CN", "zh"],
+      })
+      Object.defineProperty(navigator, "language", {
+        get: () => ["en"],
+      })
+      Object.defineProperty(navigator, "webdriver", {
+        get: () => undefined,
+      })
+    })
+  }
+  async setRequestInterception(page: Page) {
+    await page.setRequestInterception(true)
+    page.on("request", interceptedRequest => {
+      let reqUrl = interceptedRequest.url()
+      let suffix = ""
+      let urlSplitArr = reqUrl.split(".")
+      if (urlSplitArr.length > 1) {
+        suffix = urlSplitArr.pop() as string
+      }
+      const disableSuffixArr = ["png", "jpg", "jpeg", "webp", "gif", "bmp", "woff", "woff2", "ttf"]
+      if (
+        interceptedRequest.resourceType() === "image" ||
+        interceptedRequest.resourceType() === "font" ||
+        disableSuffixArr.includes(suffix)
+      ) {
+        interceptedRequest.abort()
+      } else {
+        interceptedRequest.continue()
+      }
+    })
+  }
+  async setMaxViewport(page: Page, headless: boolean) {
     let availWidth =
-      os.platform() === "win32"
+      os.platform() === "win32" && !headless
         ? await page.evaluate(() => {
+            console.log(screen.availWidth)
             return screen.availWidth
           })
         : 1920
@@ -36,7 +83,14 @@ export default class Spider implements ISpider {
     })
   }
   async screenShot(page: Page, conf: ScreenShotConf) {
-    console.log(conf, page)
+    const { fileName, fullPage, path } = conf
+    if (!existsSync(path)) {
+      mkdirSync(path)
+    }
+    await page.screenshot({
+      path: path + "/" + fileName + ".png",
+      fullPage: !!fullPage,
+    })
   }
   async addScript(page: Page, scriptName: string) {
     await page.addScriptTag({
