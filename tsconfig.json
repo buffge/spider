@@ -1,40 +1,64 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "lib": ["dom", "esnext"],
+    // 目标 ECMAScript 版本，Chrome 最新版支持 ES2022+
+    "target": "esnext",
+    // 模块系统，使用 ES 模块以支持原生模块加载
+    "module": "esnext",
+    // 模块解析策略
+    "moduleResolution": "bundler",
+    // 生成相应的 .d.ts 声明文件
+    "declaration": false,
+    // 生成 sourceMap 用于调试
     "sourceMap": false,
-    "inlineSourceMap": false,
-    "jsx": "react",
-    "moduleResolution": "node",
-    "noImplicitReturns": true,
+    // 输出目录
+    "outDir": "./dist",
+    // 输入文件目录
+    "rootDir": "./src",
+    // 严格模式开关，推荐开启
     "strict": true,
-    "charset": "utf8",
-    "newLine": "LF",
-    "removeComments": true,
-    "plugins": [],
-    "noImplicitThis": true,
-    "noImplicitAny": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "skipLibCheck": true,
+    // 兼容 CommonJS 模块
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "commonjs",
-    "resolveJsonModule": true,
+    // 允许从没有默认导出的模块中默认导入
+    "allowSyntheticDefaultImports": true,
+    // 将每个文件作为单独的模块
     "isolatedModules": true,
-    "noEmit": false,
-    "outDir": "build",
+    // 启用装饰器
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    // 跳过库检查，加速编译
+    "skipLibCheck": true,
+    // 允许 javascript 文件
     "allowJs": false,
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": ["./*"],
-      "@interface/*": ["./interface/*"],
-      "@sites/*": ["./sites/*"],
-      "@conf/*": ["./config/*"]
-    }
+    // 检查 javascript 文件的类型错误
+    "checkJs": false,
+    // 移除注释
+    "removeComments": false,
+    // 保留 const 声明
+    "preserveConstEnums": true,
+    // 生成符合 ECMA 标准的代码
+    "useDefineForClassFields": true,
+    // 浏览器环境
+    "lib": [
+      "ESNext",
+      "DOM",
+    ],
+    "noEmit": true,
+    // 不生成帮助文件
+    "noEmitHelpers": true,
+    // 额外的类型检查选项
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
-  "exclude": []
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
