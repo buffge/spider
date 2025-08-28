@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync } from 'node:fs'
+import { pseudoChrome, scriptNameMapPath } from '@conf/app'
 import puppeteer, {
   type Browser,
   type CookieData,
@@ -6,7 +7,6 @@ import puppeteer, {
   type LaunchOptions,
   type Page,
 } from 'puppeteer-core'
-import { pseudoChrome, scriptNameMapPath } from './config/app'
 export interface ScreenShotConf {
   // 存储路径
   path: string

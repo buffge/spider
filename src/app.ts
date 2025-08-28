@@ -1,4 +1,4 @@
-import { launchOpt, userAgent } from './config/app'
+import { launchOpt, userAgent } from '@conf/app'
 import Spider from './Spider'
 
 export default class App {

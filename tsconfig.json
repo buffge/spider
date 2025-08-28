@@ -52,7 +52,7 @@
     "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
   },
   "include": [
     "src/**/*"
@@ -60,5 +60,6 @@
   "exclude": [
     "node_modules",
     "dist"
-  ]
+  ],
+  "extends": "./tsconfig.paths.json"
 }
