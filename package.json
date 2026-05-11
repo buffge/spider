@@ -1,31 +1,24 @@
 {
   "name": "spider",
   "version": "1.0.0",
-  "main": "index.js",
   "repository": "https://github.com/buffge/spider",
-  "author": "buffge <1515888956@qq.com>",
+  "author": "buffge <admin@buffge.com>",
   "license": "MIT",
-  "private": false,
+  "private": true,
+  "type": "module",
   "dependencies": {
-    "delay": "^4.3.0",
-    "jquery": "^3.4.1",
-    "module-alias": "^2.2.2",
-    "moment": "^2.24.0",
-    "puppeteer-core": "^1.20.0"
+    "puppeteer-core": "^24.17.0"
   },
   "devDependencies": {
-    "@types/jquery": "^3.3.31",
-    "@types/node": "^12.7.12",
-    "@types/puppeteer-core": "^1.9.0",
-    "typescript": "^3.6.4"
+    "@biomejs/biome": "^2.2.2",
+    "@types/node": "^22.18.0",
+    "esbuild": "^0.25.9",
+    "typescript": "^5.9.2"
   },
   "scripts": {
-    "start": "node ./build/index"
-  },
-  "_moduleAliases": {
-    "@": "./build",
-    "@interface": "./build/interface",
-    "@sites": "./build/sites",
-    "@conf": "./build/config"
+    "esbuild":"node esbuild.js",
+    "start": "node ./dist/bundle.js",
+    "fix": "biome check --fix .",
+    "lint": "biome check ."
   }
 }
