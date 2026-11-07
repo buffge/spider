@@ -1,9 +1,8 @@
-import "module-alias/register"
-import App from "@sites/sina"
-let app = new App()
+import App from "#sites/sina/index.js"
+
+const app = new App()
 try {
-  app.start()
+  await app.start()
 } catch (e) {
-  console.log("运行过程发生了错误")
-  console.log(e)
+  console.error("运行过程发生了错误", e)
 }

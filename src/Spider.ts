@@ -1,22 +1,24 @@
-import ISpider, { ScreenShotConf, Mode } from "@/interface/Spider"
-import { existsSync, mkdirSync } from "fs"
-import * as os from "os"
-import puppeteer, {
+import type ISpider from "#root/interface/Spider.js"
+import type { ScreenShotConf, Mode } from "#root/interface/Spider.js"
+import { existsSync, mkdirSync } from "node:fs"
+import * as os from "node:os"
+import puppeteer from "puppeteer-core"
+import type {
   Browser,
-  DirectNavigationOptions,
+  CookieParam,
+  GoToOptions,
   LaunchOptions,
   Page,
-  SetCookie,
 } from "puppeteer-core"
-import { pseudoChrome, scriptNameMapPath } from "./config/app"
+import { pseudoChrome, scriptNameMapPath } from "#conf/app.js"
+
 declare let window: Window & { chrome: any }
+
 export default class Spider implements ISpider {
   startTime?: Date
   pages: Page[] = []
   browser?: Browser
-  constructor(mode: Mode = "prod") {
-    mode = mode
-  }
+  constructor(public readonly mode: Mode = "prod") {}
   start() {}
   async launch(opts: LaunchOptions) {
     this.startTime = new Date()
@@ -29,7 +31,9 @@ export default class Spider implements ISpider {
   async setWebDriverMask(page: Page) {
     await page.evaluateOnNewDocument(() => {
       window.chrome = pseudoChrome
-      const originalQuery = window.navigator.permissions.query
+      const originalQuery = window.navigator.permissions.query.bind(
+        window.navigator.permissions,
+      )
       window.navigator.permissions.query = parameters =>
         parameters.name === "notifications"
           ? Promise.resolve({ state: Notification.permission } as PermissionStatus)
@@ -52,26 +56,27 @@ export default class Spider implements ISpider {
   async setRequestInterception(page: Page) {
     await page.setRequestInterception(true)
     page.on("request", interceptedRequest => {
-      let reqUrl = interceptedRequest.url()
+      const reqUrl = interceptedRequest.url()
       let suffix = ""
-      let urlSplitArr = reqUrl.split(".")
+      const urlSplitArr = reqUrl.split(".")
       if (urlSplitArr.length > 1) {
         suffix = urlSplitArr.pop() as string
       }
       const disableSuffixArr = ["png", "jpg", "jpeg", "webp", "gif", "bmp", "woff", "woff2", "ttf"]
+      const resourceType = interceptedRequest.resourceType()
       if (
-        interceptedRequest.resourceType() === "image" ||
-        interceptedRequest.resourceType() === "font" ||
+        resourceType === "image" ||
+        resourceType === "font" ||
         disableSuffixArr.includes(suffix)
       ) {
-        interceptedRequest.abort()
+        void interceptedRequest.abort()
       } else {
-        interceptedRequest.continue()
+        void interceptedRequest.continue()
       }
     })
   }
   async setMaxViewport(page: Page, headless: boolean) {
-    let availWidth =
+    const availWidth =
       os.platform() === "win32" && !headless
         ? await page.evaluate(() => {
             console.log(screen.availWidth)
@@ -98,7 +103,7 @@ export default class Spider implements ISpider {
       path: scriptNameMapPath[scriptName],
     })
   }
-  async go(page: Page, url: string, opts: DirectNavigationOptions = {}) {
+  async go(page: Page, url: string, opts: GoToOptions = {}) {
     await page.goto(url, opts)
   }
   async shutdown() {
@@ -107,7 +112,7 @@ export default class Spider implements ISpider {
     }
     await this.browser.close()
   }
-  async setCookie(page: Page, cookie: SetCookie[]) {
+  async setCookie(page: Page, cookie: CookieParam[]) {
     await page.setCookie(...cookie)
   }
 }

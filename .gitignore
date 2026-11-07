@@ -4,4 +4,4 @@ yarn.lock
 package-lock.json
 cookie.ts
 cookies.ts
-
+.yarn

@@ -1,10 +1,11 @@
-import Spider from "@/Spider"
-import { launchOpt, userAgent, screenShotDir, scriptNameMapPath } from "@conf/app"
-import cookies from "@conf/sina/cookie"
-import { writeFileSync } from "fs"
+import Spider from "#root/Spider.js"
+import { launchOpt, userAgent, screenShotDir } from "#conf/app.js"
+import cookies from "#conf/sina/cookie.js"
+import { mkdirSync, writeFileSync } from "node:fs"
 import moment from "moment"
-import path from "path"
-import { Page } from "puppeteer"
+import * as path from "node:path"
+import type { Page } from "puppeteer-core"
+
 export interface Content {
   publishTime: string
   text: string
@@ -38,16 +39,24 @@ export default class App {
         throw new Error("Error: 5分钟内还没有完成登陆!")
       })
     console.log("登陆完成")
-    let cookies = await page.cookies("https://weibo.com", "https://sina.com.cn")
-    cookies.map(cookie => {
-      delete cookie["size"]
-      return cookie
-    })
-    const cookieStr = JSON.stringify(cookies)
-    writeFileSync(path.resolve(__dirname, "../../config/sina/cookies.ts"), cookieStr, {
-      flag: "w+",
-    })
-    this.spider.shutdown()
+    // size 是新版 Cookie 的必填字段，不属于 CookieParam，写入前剔除
+    const rawCookies = await page.cookies("https://weibo.com", "https://sina.com.cn")
+    const cleaned = rawCookies.map(({ size, ...cookie }) => cookie)
+    const cookieModule = [
+      'import type { CookieParam } from "puppeteer-core"',
+      "",
+      `const cookies = ${JSON.stringify(cleaned, null, 2)} as unknown as CookieParam[]`,
+      "",
+      "export default cookies",
+      "",
+    ].join("\n")
+    const cookieFile = path.resolve(
+      import.meta.dirname,
+      "../../../src/config/sina/cookie.ts",
+    )
+    mkdirSync(path.dirname(cookieFile), { recursive: true })
+    writeFileSync(cookieFile, cookieModule, { flag: "w+" })
+    await this.spider.shutdown()
     console.log("Success!")
   }
   async start() {
@@ -100,10 +109,10 @@ export default class App {
     })
     // 获取页面所有内容
     await this.spider.addScript(page, "jquery")
-    let contents: Content[] = await page.evaluate(() => {
-      let contents: Content[] = []
+    const contents: Content[] = await page.evaluate(() => {
+      const contents: Content[] = []
       return new Promise<Content[]>(s => {
-        let $weibos = $("#Pl_Official_MyProfileFeed__19 > div > div[minfo]")
+        const $weibos = $("#Pl_Official_MyProfileFeed__19 > div > div[minfo]")
         const weiboLen = $weibos.length
         $weibos.each(function() {
           let publishTime =
@@ -118,9 +127,10 @@ export default class App {
               .find("div.WB_detail > div.WB_from.S_txt2 > a:nth-child(1)")
               .text(),
             publishTime,
-            text: $(this)
-              .find("div.WB_detail > div.WB_text.W_f14")
-              .html(),
+            text:
+              $(this)
+                .find("div.WB_detail > div.WB_text.W_f14")
+                .html() || "",
           })
           if (contents.length === weiboLen) {
             s(contents)
@@ -132,7 +142,7 @@ export default class App {
     console.log(contents)
     // 判断是否有下一页
     const hasNextPage = await page.evaluate(() => {
-      return new Promise(s => {
+      return new Promise<boolean>(s => {
         let hasNextPage = false
         const $button = $("div.W_pages > span.list + a")
         if ($button.length === 1) {

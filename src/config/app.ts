@@ -1,10 +1,17 @@
-import * as path from "path"
-import { LaunchOptions } from "puppeteer"
+import * as path from "node:path"
+import type { LaunchOptions } from "puppeteer-core"
+
 export const userAgent =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36"
-export const screenShotDir: string = path.resolve(__dirname, "../../runtime/screenshot")
+export const screenShotDir: string = path.resolve(
+  import.meta.dirname,
+  "../../runtime/screenshot",
+)
 export const scriptNameMapPath: Record<string, string> = {
-  jquery: path.resolve(__dirname, "../../node_modules/jquery/dist/jquery.min.js"),
+  jquery: path.resolve(
+    import.meta.dirname,
+    "../../node_modules/jquery/dist/jquery.min.js",
+  ),
 }
 export const pseudoChrome = {
   app: { isInstalled: false },
@@ -62,5 +69,5 @@ export const launchOpt: LaunchOptions = {
   headless: true,
   executablePath: process.env.CHROME_EXECUTABLE_PATH,
 }
-export const rtPath = path.resolve(__dirname, "../../../runtime")
+export const rtPath = path.resolve(import.meta.dirname, "../../runtime")
 export const screenShotPath = rtPath + "/screenshot"

@@ -1,4 +1,10 @@
-import { Page, Browser, LaunchOptions, DirectNavigationOptions, SetCookie } from "puppeteer-core"
+import type {
+  Browser,
+  CookieParam,
+  GoToOptions,
+  LaunchOptions,
+  Page,
+} from "puppeteer-core"
 
 export interface ScreenShotConf {
   // 存储路径
@@ -23,9 +29,9 @@ export default interface ISpider {
   screenShot(page: Page, conf: ScreenShotConf): Promise<any>
   // 注入脚本
   addScript(page: Page, scriptName: string): Promise<any>
-  go(page: Page, url: string, opts?: DirectNavigationOptions): Promise<any>
+  go(page: Page, url: string, opts?: GoToOptions): Promise<any>
   shutdown(): Promise<any>
-  setCookie(page: Page, cookies: SetCookie[]): Promise<any>
+  setCookie(page: Page, cookies: CookieParam[]): Promise<any>
   // 请求拦截器
   setRequestInterception(page: Page): Promise<any>
 }
